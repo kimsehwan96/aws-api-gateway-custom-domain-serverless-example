@@ -21,7 +21,7 @@
 1. Must buy or have a domain through `Route53`
 2. Must have or get a SSL/TLS certificate through `AWS ACM`
 3. `aws-cli` and `serverless` must be set up on your local machine or deploying machine for depyoing this example.
-4. `aws credential` - aws access key, secret key - must be set up your deploying machine.
+4. `aws credential` - aws access key, secret key - must be set up your on deploying machine.
 
 ## Plugins
 
