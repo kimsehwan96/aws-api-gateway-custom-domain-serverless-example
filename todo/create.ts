@@ -8,7 +8,7 @@ const dynamoDb  = new DynamoDB.DocumentClient();
 module.exports.create = (event, context, callback) => {
     const timestamp = new Date().getTime()
     const data = JSON.parse(event.body)
-    if (typeof data.edgeId !== 'string'){
+    if (typeof data.content !== 'string'){
         console.error("Validation failed");
         callback(new Error("can't parse body"));
         return
