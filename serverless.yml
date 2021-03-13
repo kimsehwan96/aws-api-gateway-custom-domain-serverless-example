@@ -1,0 +1,125 @@
+service: aws-api-gateway-custom-domain-example
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ${opt:region, self:custom.defaultRegion}
+  stackName: ${self:service}-${self:provider.stage}
+  environment:
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    REGION_ABBR: ${self:custom.regionAbbr.${self:provider.region}}
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}-dynamodb-table
+  profile: ${self:custom.profiles.${self:provider.stage}}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:*"
+      Resource: "*"
+custom:
+  defaultStage: dev
+  defaultRegion: ap-northeast-2
+  regionAbbr:
+    ap-northeast-2: an2
+  apiKeys:
+    dev:
+      - name: "api-key"
+    prod:
+      - name: "api-key"
+  profiles:
+    dev: your-dev-profile
+    prod: your-prod-profile
+  domain:
+    dev: your-domain.com
+    prod: your-domain.com
+  certName:
+    dev: "*.your-domain.com"
+    prod: "*.your-domain.com"
+  customDomain:
+    certificateName: ${self:custom.certName.${opt:stage}}
+    domainName: ${self:custom.domain.${opt:stage}}
+    basePath: ''
+    securityPolicy: tls_1_2
+    apiType: rest
+    autoDomain: true
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
+functions:
+  createTodo:
+    handler: todo/create.create
+    events:
+      - http:
+          path: todo
+          method: post
+          cors: true
+          private: true
+          heders:
+            - x-api-key
+          allowCredentials: true
+  getTodo:
+    handler: todo/get.get
+    events:
+      - http:
+          path: todo/{edgeId}
+          method: get
+          cors: true
+          private: true
+          heders:
+            - x-api-key
+          allowCredentials: true
+
+  updateTodo:
+    handler: todo/update.update
+    events:
+      - http:
+          path: todo/{edgeId}
+          method: put
+          cors: true
+          private: true
+          heders:
+            - x-api-key
+          allowCredentials: true
+
+  deleteTodo:
+    handler: todo/delete.delete
+    events:
+      - http:
+          path: todo/{edgeId}
+          method: delete
+          cors: true
+          private: true
+          heders:
+            - x-api-key
+          allowCredentials: true
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - "*.ts"
+
+resources:
+  Resources:
+    DynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: todoId
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: todoId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+plugins:
+  - serverless-add-api-key
+  - serverless-domain-manager
