@@ -64,7 +64,7 @@ functions:
     handler: todo/get.get
     events:
       - http:
-          path: todo/{edgeId}
+          path: todo/{todoId}
           method: get
           cors: true
           private: true
@@ -76,7 +76,7 @@ functions:
     handler: todo/update.update
     events:
       - http:
-          path: todo/{edgeId}
+          path: todo/{todoId}
           method: put
           cors: true
           private: true
@@ -88,7 +88,7 @@ functions:
     handler: todo/delete.delete
     events:
       - http:
-          path: todo/{edgeId}
+          path: todo/{todoId}
           method: delete
           cors: true
           private: true
