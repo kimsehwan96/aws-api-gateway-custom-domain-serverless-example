@@ -1,4 +1,4 @@
-# AWS API Gateway를 커스텀 도메인으로 배포하는 방법을 소개합니다.
+# AWS API Gateway를 커스텀 도메인으로 배포하는 방법을 소개합니다.(API 키를 보안요소로 사용)
 
 ## 한국어 설명
 
@@ -16,7 +16,7 @@
 
 ## 디테일한 내용 작성 예정
 
-## English
+# How to deploy AWS API Gateway with custom domain & api key
 
 ## Prerequiste
 
